@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>猜數字遊戲</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <style>
+        body{
+          background-color: snow;
+        }
+        h2{
+            color:indianred;
+            text-align: center;
+        }
+        h6{
+            color:gray;
+            text-align: center;
+        }
+        .guess, .answer{
+            width: 500px;
+            margin: 0 auto;
+        }
+        .answer{
+          text-align: center;
+        }
+        th{
+            color:indianred;
+
+        }
+        .model{
+          display : none;
+          position: fixed;
+          z-index: 100;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          right: 0;
+          overflow: auto;
+          background-color: rgb(0,0,0);
+          background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+          background-color: #fefefe;
+          margin: auto;
+          text-align: center;
+          color : darkslategray;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 30%;
+        }
+    </style>
+</head>
+
+<body>
+  <!-- MODELS -->
+  <div id = "model_success" class= "model pt-5">
+    <div class="modal-content">        
+        <p>答對了！</p>
+        <button type="button" class="btn btn-primary"
+                data-dismiss="modal" onclick = "reload()">重新遊玩</button>        
+    </div>
+  </div>
+
+  <div id = "model_error" class= "model pt-5">
+    <div class="modal-content">        
+        <p>請輸入數字！</p>
+        <button type="button" class="btn btn-success"
+                data-dismiss="modal" onclick = "disnone()">繼續遊玩</button>        
+    </div>
+  </div>
+
+  <!-- BODY -->
+    <div class="container pt-5">
+
+        <h2>猜數字遊戲</h2>
+        <h6>蕭孟欣</h6>
+
+        <form>
+            <div class="input-group guess mt-4">
+              <div class="input-group-prepend">
+                <select id="op" onchange="createQues(value)" class="input-group-select form-control btn btn-default">
+                    <option value = "3">3位數</option>
+                    <option value = "4">4位數</option class = "op">
+                    <option value = "5">5位數</option class = "op">
+                </select>
+              </div>
+              <input type="text" class="form-control" id = "ans" placeholder="請輸入數字">
+              <div>
+                <input type = "button"
+                           class = "btn btn-outline-danger form-control"
+                           value = "check"
+                           onclick="checkAns()">
+              </div>
+            </div>
+        </form>
+
+        <table class="answer table table-striped mt-4">
+            <thead>
+              <tr>
+                <th>判斷</th>
+                <th>答案歷史</th>
+              </tr>
+            </thead>
+            <tbody id = "here">
+            </tbody>
+          </table>
+    </div>
+
+
+    <script>
+
+      let NUMs;
+      let ques = [];
+      let model_success = document.getElementById("model_success");
+      let model_error = document.getElementById("model_error");
+
+      //reset
+      function reset(){
+        ques = [];
+        document.getElementById("here").innerHTML = "";
+      }
+
+      function disnone(){
+        model_success.style.display = "none";
+        model_error.style.display = "none";
+      }
+
+      function reload(){
+        reset();
+        disnone();
+        createQues();
+      }
+
+      //createQuestion
+      function createQues(NUMs = 3){
+        reset();
+        for (let i = 0 ; i < NUMs ; i++){
+            let num = String(Math.floor(Math.random()*10));
+            if (ques.indexOf(num) == -1){
+                ques.push(num);
+            }else{
+                i--;
+            }
+          }
+        console.log(ques);
+      }
+      createQues();
+      
+      //CheckAnswer
+      function checkAns(){
+        let ans = document.getElementById("ans").value;
+        let a = 0;
+        let b = 0;
+        let j = 0;
+        if (ans.match(/\d/)){
+            for (let i = 0 ; i < ques.length ; i++){
+                if (ans[i] == ques[i]){
+                    a++;
+                }else if(ques.indexOf(ans[i]) !== -1){
+                    b++;
+                }
+            }
+            document.getElementById("here").innerHTML +=
+            `<tr><td>${a}<b class="text-danger">A</b>${b}<b class="text-primary">B</b></td><td>${ans}</td></tr>`;
+            if(a == ques.length){
+              model_success.style.display = "block";
+              }
+        }else{
+          model_error.style.display = "block";
+        }
+        document.getElementById("ans").value = "";
+      }
+
+    </script>
+    
+</body>
+</html>
